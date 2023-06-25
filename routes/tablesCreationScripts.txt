@@ -1,0 +1,108 @@
+Express server start command 
+
+set DEBUG=myapp:* & npm start
+
+Some values for users
+CREATE TABLE Role (
+    roleId int IDENTITY(1,1) PRIMARY KEY,
+    nom varchar(255)
+)
+
+INSERT INTO Role (nom)
+VALUES
+    ('Admin'),
+    ('User'),
+    ('Manager'),
+    ('Guest');
+
+CREATE TABLE City (
+    cityId int IDENTITY(1,1) PRIMARY KEY,
+    nom varchar(255),
+    images varchar(255),
+    searchCount BIGINT,
+)
+
+CREATE table Users (
+    id int IDENTITY(1,1) PRIMARY KEY,
+    lastName varchar(255) NOT NULL,
+    firstName varchar(255),
+    dateofBirth varchar(255),
+    phoneNumber varchar(255),
+    address varchar(255),
+    latitude varchar(255),
+    longitude varchar(255),
+    userName varchar (255),
+    passwrd varchar(255),
+    profilePic varchar(255),
+	roleId INT NOT NULL,
+    CONSTRAINT FK_userRole FOREIGN KEY (roleId) REFERENCES Role(roleId),
+); 
+
+INSERT INTO [dbo].[Users]
+    ([lastName], [firstName], [dateofBirth], [phoneNumber], [address], [latitude], [longitude], [userName], [passwrd], [profilePic])
+VALUES
+    ('Doe', 'John', '1990-01-01', '123456789', '123 Main St', '123.456', '78.901', 'johndoe', 'password123', 'profilepic.jpg'),
+    ('Smith', 'Jane', '1985-05-10', '987654321', '456 Elm St', '456.789', '23.456', 'janesmith', 'password456', 'profilepic.jpg'),
+    -- Add more rows as needed
+    ('Wilson', 'Sam', '1992-09-15', '555555555', '789 Oak St', '789.012', '45.678', 'samwilson', 'password789', 'profilepic.jpg');
+
+
+CREATE table Agences (
+    agenceId int IDENTITY(1,1) PRIMARY KEY,
+    name varchar(255) NOT NULL,
+    logo varchar(255),
+    phone varchar(255),
+    altPhone varchar(255),
+    email varchar(255),
+    website varchar(255),
+    longitude varchar(255),
+    latitude varchar (255),
+    passswrd varchar(255),
+    adress varchar(255),
+    cityId INT,
+    CONSTRAINT FK_agenceId FOREIGN KEY (cityId) REFERENCES City(cityId),
+); 
+
+CREATE TABLE PropertyType (
+    propertyTypeId int IDENTITY(1,1) PRIMARY KEY,
+    nom varchar(255),
+)
+CREATE table Property (
+    propertyId int IDENTITY(1,1) PRIMARY KEY,
+    id int NOT NULL,
+    cityId int NOT NULL,
+    featured bit,
+    title varchar(255),
+    descr varchar(255),
+    images varchar(255),
+    beds int,
+    baths int,
+    kitchens int,
+    parkings int,
+    price float,
+    addres varchar(255),
+    latitude varchar(255),
+    longitude varchar(255),
+    datePosted varchar(255),
+    size float,
+    propertyTypeId int not null,
+    saleType varchar(255),
+    agenceId INT,
+    CONSTRAINT FK_propertyCity FOREIGN KEY (cityId) REFERENCES City(cityId),
+    CONSTRAINT FK_propertyUser FOREIGN KEY (id) REFERENCES Users(id),
+    CONSTRAINT FK_propertyType FOREIGN KEY (propertyTypeId) REFERENCES PropertyType(propertyTypeId),
+    CONSTRAINT FK_propertyAgency FOREIGN KEY (agenceId) REFERENCES Agences(agenceId)
+); 
+CREATE TABLE Likes (
+    likeId int IDENTITY(1,1) PRIMARY KEY,
+    id int not null,
+    propertyId int not null,
+    CONSTRAINT FK_userLikes FOREIGN KEY (id) REFERENCES Users(id),
+    CONSTRAINT FK_propertyLike FOREIGN KEY (propertyId) REFERENCES property(propertyId)
+    
+)
+
+/* Script for adding a columnwith foreign key constraint
+
+ALTER TABLE users
+ADD roleId INT FOREIGN KEY REFERENCES Role(roleId);
