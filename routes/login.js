@@ -4,6 +4,9 @@ const odbc = require("odbc");
 
 const router = express.Router();
 
+router.get("/", function (req, res, next) {
+  res.render("login", { title: "login Page" });
+});
 // POST login route
 router.post("/", async (req, res, next) => {
   const { email, password } = req.body;
