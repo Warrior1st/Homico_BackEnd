@@ -46,6 +46,13 @@ VALUES
     -- Add more rows as needed
     ('Wilson', 'Sam', '1992-09-15', '555555555', '789 Oak St', '789.012', '45.678', 'samwilson', 'password789', 'profilepic.jpg');
 
+alter table users add email varchar(255)
+
+update users set email = 'johndoe@gmail.com' where id = 2
+
+update users set email = 'janesmith@gmail.com' where id = 3
+
+update users set email = 'samwilson@gmail.com' where id = 4
 
 CREATE table Agences (
     agenceId int IDENTITY(1,1) PRIMARY KEY,

@@ -18,7 +18,7 @@ router.post("/", async (req, res, next) => {
 
     // Retrieve user from the database based on the username
     const result = await connection.query(
-      "SELECT * FROM users WHERE username = ?",
+      "SELECT * FROM users WHERE email = ?",
       [email]
     );
     const user = result[0];
