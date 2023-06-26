@@ -13,7 +13,9 @@ router.post("/", async (req, res, next) => {
 
   try {
     // Establish a connection to the database using the ODBC driver and connection string
-    const connectionString = process.env.dbconnection;
+    //const connectionString = process.env.dbconnection;
+    const connectionString =
+      "Driver={ODBC Driver 18 for SQL Server};Server=tcp:homicoserver.database.windows.net,1433;Database=homico;Uid=homico_admin;Pwd={Nejamaistrahir1997};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;";
     const connection = await odbc.connect(connectionString);
 
     // Retrieve user from the database based on the username
