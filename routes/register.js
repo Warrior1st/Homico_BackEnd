@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-var odbc = require("odbc");
+const odbc = require("odbc");
 
 /* GET users listing. */
 router.post("/", async (req, res, next) => {
