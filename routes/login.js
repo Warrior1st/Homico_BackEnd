@@ -1,6 +1,6 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-//const odbc = require("odbc");
+const odbc = require("odbc");
 const router = express.Router();
 
 const secret = "ejnjnbjenoiugh91eyr3r@~@3ijnwjekn";
