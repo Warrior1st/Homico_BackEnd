@@ -1,13 +1,9 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const odbc = require("odbc");
+const sql = require("mssql");
 const router = express.Router();
 
 const secret = "ejnjnbjenoiugh91eyr3r@~@3ijnwjekn";
-
-// router.get("/", function (req, res, next) {
-//   res.render("login", { title: "Cooking" });
-// });
 
 //POST login route
 router.post("/", async (req, res, next) => {
@@ -16,18 +12,26 @@ router.post("/", async (req, res, next) => {
   try {
     // Establish a connection to the database using the ODBC driver and connection string
     //const connectionString = process.env.dbconnection;
-    const connectionString =
-      "Driver={ODBC Driver 18 for SQL Server};Server=tcp:homicoserver.database.windows.net,1433;Database=homico;Uid=homico_admin;Pwd={Nejamaistrahir1997};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;";
-    const connection = await odbc.connect(connectionString);
+    const config = {
+      user: "homico_admin",
+      password: "Nejamaistrahir1997",
+      server: "homicoserver.database.windows.net",
+      database: "homico",
+      options: {
+        encrypt: true,
+      },
+    };
+
+    const pool = await sql.connect(config);
 
     // Retrieve user from the database based on the username
-    const result = await connection.query(
-      "select * from users, role where users.roleId = role.roleId and email = ?",
-      [email]
-    );
-    const user = result[0];
-
-    // Check if the user exists
+    const result = await pool
+      .request()
+      .input("email", sql.VarChar, email)
+      .query(
+        "SELECT * FROM users, role WHERE users.roleId = role.roleId AND email = @email"
+      );
+    const user = result.recordset[0]; // Check if the user exists
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }

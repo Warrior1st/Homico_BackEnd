@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-const odbc = require("odbc");
+const sql = require("mssql");
 
 // router.get("/", function (req, res, next) {
 //   res.render("register", { title: "Cooking" });
@@ -11,18 +11,21 @@ router.post("/", async (req, res, next) => {
   const { firstName, lastName, email, username, password } = req.body;
   const userRole = 2;
 
-  try {
-    // Establish a connection to the database using the ODBC driver and connection string
-    //const connectionString = process.env.dbconnection;
-    const connectionString =
-      "Driver={ODBC Driver 18 for SQL Server};Server=tcp:homicoserver.database.windows.net,1433;Database=homico;Uid=homico_admin;Pwd={Nejamaistrahir1997};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;";
-    const connection = await odbc.connect(connectionString);
+  const config = {
+    user: "homico_admin",
+    password: "Nejamaistrahir1997",
+    server: "homicoserver.database.windows.net",
+    database: "homico",
+    options: {
+      encrypt: true,
+    },
+  };
 
-    //Insert new user in the database
-    await connection.query(
-      "insert into users(firstName, lastName, email, userName, passwrd, roleId) values (?,?,?,?,?,?)",
-      [firstName, lastName, email, username, password, userRole]
-    );
+  try {
+    await sql.connect(config);
+
+    // Insert new user in the database
+    await sql.query`insert into users(firstName, lastName, email, userName, passwrd, roleId) values (${firstName}, ${lastName}, ${email}, ${username}, ${password}, ${userRole})`;
 
     return res.sendStatus(204);
   } catch (error) {
@@ -30,6 +33,8 @@ router.post("/", async (req, res, next) => {
     return res
       .status(500)
       .json({ error: "An error occurred during the database query" });
+  } finally {
+    sql.close();
   }
 });
 
