@@ -109,6 +109,12 @@ CREATE TABLE Likes (
     
 )
 
+CREATE TABLE HistoriqueConnexion (
+  hist_id INT IDENTITY(1,1) PRIMARY KEY,
+  id INT,
+  connexion_datetime DATETIME,
+  FOREIGN KEY (id) REFERENCES Users(id)
+);
 /* Script for adding a columnwith foreign key constraint
 
 ALTER TABLE users

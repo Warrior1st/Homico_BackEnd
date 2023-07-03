@@ -57,6 +57,23 @@ router.post("/", async (req, res, next) => {
       const longitude = user.longitude;
       const imageName = user.profilePic;
 
+      //Store the time the user logged in
+      const connexionDatetime = new Date().toISOString();
+
+      // Insert the login record into the HistoriqueConnexion table
+      const insertQuery = `INSERT INTO HistoriqueConnexion (id, connexion_datetime) VALUES (@userId, @connexionDatetime)`;
+      const insertResult = await pool
+        .request()
+        .input("userId", sql.Int, user.id)
+        .input("connexionDatetime", sql.DateTime, connexionDatetime)
+        .query(insertQuery);
+
+      if (insertResult.rowsAffected[0] === 1) {
+        console.log("Login record stored successfully");
+      } else {
+        console.error("Error storing login record");
+      }
+
       // Sign the token with a secret key and set an expiration time
       const token = jwt.sign(payload, secret, { expiresIn: "7d" });
 
