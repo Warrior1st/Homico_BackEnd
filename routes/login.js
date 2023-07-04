@@ -80,18 +80,7 @@ router.post("/", async (req, res, next) => {
       // Return the token as the response
       return res.json({
         token,
-        userId,
-        username,
-        role,
-        firstName,
-        lastName,
-        dateofBirth,
-        phoneNumber,
-        email,
-        address,
-        latitude,
-        longitude,
-        imageName,
+        user,
       });
     } else {
       // Invalid password
