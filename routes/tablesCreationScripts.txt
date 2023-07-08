@@ -22,6 +22,13 @@ CREATE TABLE City (
     searchCount BIGINT,
 )
 
+INSERT INTO [dbo].[City] ([nom], [images], [searchCount])
+VALUES
+    ('Kinshasa', '5;6;7;8', 0),
+    ('Lubumbashi', '9;10;11;12', 0),
+    ('Goma', '13;14;15;16', 0);
+
+
 CREATE table Users (
     id int IDENTITY(1,1) PRIMARY KEY,
     lastName varchar(255) NOT NULL,
@@ -74,9 +81,15 @@ CREATE TABLE PropertyType (
     propertyTypeId int IDENTITY(1,1) PRIMARY KEY,
     nom varchar(255),
 )
+INSERT INTO [dbo].[PropertyType] ([nom])
+VALUES
+    ('terrain'),
+    ('appartement'),
+    ('maison');
+
+
 CREATE table Property (
     propertyId int IDENTITY(1,1) PRIMARY KEY,
-    id int NOT NULL,
     cityId int NOT NULL,
     featured bit,
     title varchar(255),
@@ -96,10 +109,71 @@ CREATE table Property (
     saleType varchar(255),
     agenceId INT,
     CONSTRAINT FK_propertyCity FOREIGN KEY (cityId) REFERENCES City(cityId),
-    CONSTRAINT FK_propertyUser FOREIGN KEY (id) REFERENCES Users(id),
     CONSTRAINT FK_propertyType FOREIGN KEY (propertyTypeId) REFERENCES PropertyType(propertyTypeId),
     CONSTRAINT FK_propertyAgency FOREIGN KEY (agenceId) REFERENCES Agences(agenceId)
 ); 
+INSERT INTO [dbo].[Property] (
+  [cityId],
+  [title],
+  [descr],
+  [images],
+  [beds],
+  [baths],
+  [kitchens],
+  [parkings],
+  [price],
+  [addres],
+  [latitude],
+  [longitude],
+  [datePosted],
+  [size],
+  [propertyTypeId],
+  [saleType],
+  [agenceId]
+)
+VALUES
+  (1, 'Red House', 'Experience the vibrant energy of this stunning Red House...',
+   'redHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   5, 3, 2, 0, 55000.0, '123 Red Street', -4.325, 15.322, GETDATE(), 57, 1, 'rent', 1),
+
+  (1, 'Fall House', 'Imagine waking up to the breathtaking views of fall foliage...',
+   'fallHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   7, 5, 1, 0, 95000.0, '456 Fall Avenue', -4.329, 15.324, GETDATE(), 350, 2, 'sell', 2),
+
+  (1, 'Old House', 'Step back in time with this charming Old House, full of character...',
+   'oldHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   2, 3, 1, 0, 155000.0, '789 Old Road', -4.331, 15.326, GETDATE(), 125, 2, 'rent', 3),
+
+  (1, 'Pool House', 'Take a dip in your own private oasis with this luxurious Pool House...',
+   'poolHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   3, 3, 2, 0, 255000.0, '789 Pool Lane', -4.333, 15.328, GETDATE(), 200, 1, 'sell', 4),
+
+  (1, 'Modern House', 'Experience modern living at its finest in this sleek and stylish Modern House...',
+   'modernHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   4, 2, 1, 0, 180000.0, '987 Modern Drive', -4.335, 15.330, GETDATE(), 180, 1, 'rent', 5),
+
+  (2, 'Beach House', 'Escape to paradise with this stunning Beach House...',
+   'beachHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   3, 4, 1, 0, 220000.0, '321 Beachfront Avenue', -4.337, 15.332, GETDATE(), 250, 1, 'sell', 6),
+
+  (2, 'Mountain House', 'Embrace the tranquility of nature with this charming Mountain House...',
+   'mountainHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   6, 3, 2, 0, 275000.0, '654 Mountain Road', -4.339, 15.334, GETDATE(), 300, 2, 'rent', 7),
+
+  (2, 'Lake House', 'Indulge in waterfront living with this exquisite Lake House...',
+   'lakeHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   5, 4, 2, 0, 330000.0, '987 Lakeside Drive', -4.341, 15.336, GETDATE(), 350, 2, 'sell', 8),
+
+  (3, 'Ranch House', 'Experience country living at its finest in this charming Ranch House...',
+   'ranchHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   7, 2, 1, 0, 285000.0, '123 Country Lane', -4.343, 15.338, GETDATE(), 400, 3, 'rent', 9),
+
+  (3, 'Suburban House', 'Enjoy the comforts of suburban living with this lovely Suburban House...',
+   'suburbanHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   8, 3, 2, 0, 310000.0, '321 Suburban Drive', -4.345, 15.340, GETDATE(), 450, 3, 'sell', 10);
+
+
+
 CREATE TABLE Likes (
     likeId int IDENTITY(1,1) PRIMARY KEY,
     id int not null,
