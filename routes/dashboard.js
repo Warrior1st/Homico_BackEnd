@@ -3,7 +3,7 @@ var router = express.Router();
 const sql = require("mssql");
 
 let featuredProperties = [1, 3, 5];
-let city = 1;
+let city = [1];
 let headerImages = ["12", "13"];
 
 /* GET dashboard. */
@@ -36,7 +36,9 @@ router.get("/", function (req, res, next) {
       SELECT * FROM Property WHERE propertyId IN (${featuredProperties.join(
         ","
       )});
-      SELECT * FROM Property WHERE datePosted >= DATEADD(DAY, -3, GETDATE());
+      SELECT * FROM Property WHERE datePosted >= DATEADD(DAY, -7, GETDATE());
+
+      SELECT * FROM City WHERE cityId IN (${city.join(",")});
     `;
 
     sql.connect(config, function (err) {
@@ -53,7 +55,7 @@ router.get("/", function (req, res, next) {
         }
 
         // Extract the data from the SQL result
-        const [featuredProperties, newProperties] = result.recordsets;
+        const [featuredProperties, newProperties, city] = result.recordsets;
 
         // Build the dashboard model
         const dashboardModel = {
@@ -61,7 +63,7 @@ router.get("/", function (req, res, next) {
           featuredProperties: featuredProperties.map((property) =>
             mapProperty(property)
           ),
-          topSearchCities: [],
+          topSearchCities: city.map((city) => mapCities(city)),
           newProperties: newProperties.map((property) => mapProperty(property)),
         };
 
@@ -98,6 +100,15 @@ function mapProperty(property) {
     propertyType: property.propertyTypeId,
     propertyCategory: property.saleType,
     agency: property.agenceId,
+  };
+}
+
+function mapCities(city) {
+  return {
+    id: city.cityId,
+    name: city.nom,
+    imageName: city.images,
+    searchCount: city.searchCount,
   };
 }
 
