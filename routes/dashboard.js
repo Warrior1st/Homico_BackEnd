@@ -2,9 +2,9 @@ var express = require("express");
 var router = express.Router();
 const sql = require("mssql");
 
-let featuredProperties = [1, 3, 5];
+let featuredProperties = [1, 2, 5, 8];
 let city = [1];
-let headerImages = ["12", "13"];
+let headerImages = ["12"];
 
 /* GET dashboard. */
 router.get("/", function (req, res, next) {
@@ -13,12 +13,15 @@ router.get("/", function (req, res, next) {
 
   // Decrypt the token and check the role in the payload
   // Replace the decryption logic with your own implementation
-  //const decryptedToken = decryptToken(token);
-  //const role = decryptedToken?.role;
+  const decryptedToken = decryptToken(token);
+  const userId = decryptedToken?.userId;
+  const role = decryptedToken?.role.toLowerCase();
 
-  const role = "user";
+  role.trim();
+
+  const red = "rouge";
   // Check if the role is "user"
-  if (role === "user") {
+  if (role === "user" || role === "admin") {
     // If the role is "user", proceed with fetching the dashboard data
     const config = {
       user: "homico_admin",
@@ -33,13 +36,15 @@ router.get("/", function (req, res, next) {
     // Fetch the data for the dashboard
     // Modify the SQL query to retrieve the required data for the dashboard
     const query = `
-      SELECT * FROM Property WHERE propertyId IN (${featuredProperties.join(
-        ","
-      )});
-      SELECT * FROM Property WHERE datePosted >= DATEADD(DAY, -7, GETDATE());
+    SELECT TOP 1000 [propertyId],[Property].[cityId],[title],[descr],[images],[beds],[baths],[kitchens],[parkings],[price],[addres],[Property].[latitude],[Property].[longitude],[datePosted],[size],[PropertyType].[nom],[saleType],[Agences].[name], [Agences].[adress], [Agences].[email]
+    FROM [dbo].[Property] LEFT JOIN [PropertyType] ON [Property].[propertyTypeId] = [PropertyType].[propertyTypeId] LEFT JOIN [dbo].[Agences] ON [Property].[agenceId] = [Agences].[agenceId]
+    WHERE propertyId IN (${featuredProperties.join(",")});
 
-      SELECT * FROM City WHERE cityId IN (${city.join(",")});
-    `;
+    SELECT TOP 1000 [propertyId],[cityId],[title],[descr],[images],[beds],[baths],[kitchens],[parkings],[price],[addres],[latitude],[longitude],[datePosted],[size],[PropertyType].[nom],[saleType],[agenceId]
+    FROM [dbo].[Property] LEFT JOIN [PropertyType] ON [Property].[propertyTypeId] = [PropertyType].[propertyTypeId] WHERE datePosted >= DATEADD(DAY, -30, GETDATE()) AND propertyId = 1;
+
+    SELECT * FROM City WHERE cityId IN (${city.join(",")});
+`;
 
     sql.connect(config, function (err) {
       if (err) {
@@ -56,7 +61,6 @@ router.get("/", function (req, res, next) {
 
         // Extract the data from the SQL result
         const [featuredProperties, newProperties, city] = result.recordsets;
-
         // Build the dashboard model
         const dashboardModel = {
           headerImages: headerImages,
@@ -83,10 +87,11 @@ function mapProperty(property) {
   return {
     // Map the fields accordingly
     // Example:
-    id: property.id,
+    id: property.propertyId,
     title: property.title,
     description: property.descr,
-    images: property.images,
+    city: "Kinshasa",
+    imageNames: property.images,
     bedRoomCount: property.beds,
     bathRoomCount: property.baths,
     kitchenRoomCount: property.kitchens,
@@ -97,9 +102,11 @@ function mapProperty(property) {
     longitude: property.longitude,
     datePosted: property.datePosted,
     size: property.size,
-    propertyType: property.propertyTypeId,
+    propertyType: property.nom,
     propertyCategory: property.saleType,
-    agency: property.agenceId,
+    user: property.name,
+    agencyAddress: property.adress,
+    agencyEmail: property.email,
   };
 }
 
