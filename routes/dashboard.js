@@ -11,19 +11,24 @@ let headerImages = ["12"];
 router.get("/", function (req, res, next) {
   // Get the JWT token from the request header
   const token = req.headers.authorization?.split(" ")[1]; // Assuming the token is in the format "Bearer <token>"
-
-  if (!token) {
-    return res.status(403).json({ error: "Access denied." });
+  let role;
+  if (token) {
+    // Decrypt the token and check the role in the payload
+    // Replace the decryption logic with your own implementation
+    const decryptedToken = decryptToken(token);
+    const userId = decryptedToken?.userId;
+    role = decryptedToken?.role.toLowerCase();
+  } else {
+    role = "publicUser";
   }
-  // Decrypt the token and check the role in the payload
-  // Replace the decryption logic with your own implementation
-  const decryptedToken = decryptToken(token);
-  const userId = decryptedToken?.userId;
-  const role = decryptedToken?.role.toLowerCase();
 
-  const red = "rouge";
   // Check if the role is "user"
-  if (role && (role.trim() === "user" || role.trim() === "admin")) {
+  if (
+    role &&
+    (role.trim() === "user" ||
+      role.trim() === "admin" ||
+      role.trim() === "publicUser")
+  ) {
     // If the role is "user", proceed with fetching the dashboard data
     const config = {
       user: "homico_admin",
