@@ -20,6 +20,7 @@ router.get("/", function (req, res, next) {
     role = decryptedToken?.role.toLowerCase();
   } else {
     role = "publicUser";
+    let a = 2;
   }
 
   // Check if the role is "user"
