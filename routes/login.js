@@ -28,8 +28,9 @@ router.post("/", async (req, res, next) => {
     const result = await pool
       .request()
       .input("email", sql.VarChar, email)
+      .input("password", sql.VarChar, password)
       .query(
-        "SELECT * FROM users, role WHERE users.roleId = role.roleId AND email = @email"
+        "SELECT * FROM users INNER JOIN role ON users.roleId = role.roleId WHERE userName = @email AND passwrd = @password"
       );
     const user = result.recordset[0]; // Check if the user exists
     if (!user) {
