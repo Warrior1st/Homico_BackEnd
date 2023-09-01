@@ -3,6 +3,16 @@ var router = express.Router();
 const jwt = require("jsonwebtoken");
 const sql = require("mssql");
 
+const config = {
+  user: "homico_admin",
+  password: "Nejamaistrahir1997",
+  server: "homicoserver.database.windows.net",
+  database: "homico",
+  options: {
+    encrypt: true,
+  },
+};
+
 router.get("/likes", function (req, res, next) {
   const token = req.headers.authorization?.split(" ")[1];
 
@@ -15,16 +25,6 @@ router.get("/likes", function (req, res, next) {
   role.trim();
   if (role === "user" || role === "admin") {
     // If the role is "user", proceed with fetching the dashboard data
-    const config = {
-      user: "homico_admin",
-      password: "Nejamaistrahir1997",
-      server: "homicoserver.database.windows.net",
-      database: "homico",
-      options: {
-        encrypt: true,
-      },
-    };
-
     // Fetch the data for the dashboard
     // Modify the SQL query to retrieve the required data for the dashboard
 
@@ -43,12 +43,17 @@ router.get("/likes", function (req, res, next) {
           console.log(err);
           return;
         }
+        const likedProperties = result.recordset;
 
-        // Extract the data from the SQL result
-        const [likedProperties] = result.recordset;
+        const dictionary = {}; // Creating an empty object
+
+        likedProperties.forEach((element) => {
+          // Adding values to the object
+          dictionary[element.propertyId] = "property " + element.propertyId;
+        });
 
         // Respond with the dashboard model
-        res.json(likedProperties);
+        res.json(dictionary);
       });
     });
   } else {
@@ -70,15 +75,7 @@ router.post("/like", async (req, res, next) => {
 
   if (role === "user" || role === "admin") {
     // If the role is "user", proceed with fetching the dashboard data
-    const config = {
-      user: "homico_admin",
-      password: "Nejamaistrahir1997",
-      server: "homicoserver.database.windows.net",
-      database: "homico",
-      options: {
-        encrypt: true,
-      },
-    };
+
     let query;
     if (propertyId) {
       if (isLiked) {
@@ -140,15 +137,7 @@ router.post("/search", async (req, res, next) => {
 
   if (role === "user" || role === "admin") {
     // If the role is "user", proceed with fetching the dashboard data
-    const config = {
-      user: "homico_admin",
-      password: "Nejamaistrahir1997",
-      server: "homicoserver.database.windows.net",
-      database: "homico",
-      options: {
-        encrypt: true,
-      },
-    };
+
     const pool = await sql.connect(config);
 
     const address = ""; // Provide the desired address pattern
@@ -246,6 +235,57 @@ router.post("/search", async (req, res, next) => {
   }
 });
 
+router.get("/search/constants", async function (req, res, next) {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    let role;
+
+    if (token) {
+      const decryptedToken = await decryptToken(token); // Assuming decryptToken is an asynchronous function
+      if (decryptedToken === "expired") {
+        return res.json("expired");
+      }
+      const userId = decryptedToken?.userId;
+      role = decryptedToken?.role.toLowerCase();
+    } else {
+      role = "publicUser";
+    }
+
+    if (
+      role &&
+      (role.trim() === "user" ||
+        role.trim() === "admin" ||
+        role.trim() === "publicUser")
+    ) {
+      // Fetch the data for the dashboard
+      const query = `
+        SELECT TOP 1000 [nom] FROM  PropertyType;
+        SELECT DISTINCT TOP 1000 [saleType] FROM property;
+        SELECT [nom] FROM City;
+      `;
+
+      const connection = await sql.connect(config);
+      const request = new sql.Request(connection);
+
+      const result = await request.query(query);
+      const [PropertyType, PropertyCategories, City] = result.recordsets;
+
+      const searchConstantsModel = {
+        propertyTypes: PropertyType,
+        propertyCategories: PropertyCategories,
+        cities: City,
+      };
+
+      return res.json(searchConstantsModel);
+    } else {
+      return res.status(403).json("Unauthorized");
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json("Internal Server Error");
+  }
+});
+
 function mapProperty(property) {
   // Map the property fields to your Property model
   return {
@@ -286,4 +326,5 @@ function decryptToken(token) {
     return null;
   }
 }
+
 module.exports = router;

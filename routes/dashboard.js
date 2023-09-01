@@ -5,7 +5,7 @@ const sql = require("mssql");
 
 let featuredProperties = [1, 2, 5, 8];
 let city = [1];
-let headerImages = ["12"];
+let headerImages = ["6"];
 
 /* GET dashboard. */
 router.get("/", function (req, res, next) {
@@ -16,6 +16,9 @@ router.get("/", function (req, res, next) {
     // Decrypt the token and check the role in the payload
     // Replace the decryption logic with your own implementation
     const decryptedToken = decryptToken(token);
+    if (decryptedToken === "expired") {
+      return res.json("expired");
+    }
     const userId = decryptedToken?.userId;
     role = decryptedToken?.role.toLowerCase();
   } else {
@@ -44,12 +47,14 @@ router.get("/", function (req, res, next) {
     // Fetch the data for the dashboard
     // Modify the SQL query to retrieve the required data for the dashboard
     const query = `
-    SELECT TOP 1000 [propertyId],[Property].[cityId],[title],[descr],[images],[beds],[baths],[kitchens],[parkings],[price],[addres],[Property].[latitude],[Property].[longitude],[datePosted],[size],[PropertyType].[nom],[saleType],[Agences].[name], [Agences].[adress], [Agences].[email]
-    FROM [dbo].[Property] LEFT JOIN [PropertyType] ON [Property].[propertyTypeId] = [PropertyType].[propertyTypeId] LEFT JOIN [dbo].[Agences] ON [Property].[agenceId] = [Agences].[agenceId]
-    WHERE propertyId IN (${featuredProperties.join(",")});
+    SELECT TOP 1000 [Property].[propertyId],[Property].[cityId],[title],[descr],[images],[beds],[baths],[kitchens],[parkings],[price],[addres],[Property].[latitude],[Property].[longitude],[datePosted],[size],[PropertyType].[nom],[saleType],[Agences].[name], [Agences].[adress], [Agences].[email],
+    CASE WHEN Likes.propertyId IS NOT NULL THEN 1 ELSE 0 END AS is_liked
+    FROM [dbo].[Property] LEFT JOIN [PropertyType] ON [Property].[propertyTypeId] = [PropertyType].[propertyTypeId] LEFT JOIN [dbo].[Agences] ON [Property].[agenceId] = [Agences].[agenceId] LEFT JOIN Likes ON property.propertyId = Likes.propertyId AND Likes.id = 23
+    WHERE Property.propertyId IN (${featuredProperties.join(",")});
 
-    SELECT TOP 1000 [propertyId],[cityId],[title],[descr],[images],[beds],[baths],[kitchens],[parkings],[price],[addres],[latitude],[longitude],[datePosted],[size],[PropertyType].[nom],[saleType],[agenceId]
-    FROM [dbo].[Property] LEFT JOIN [PropertyType] ON [Property].[propertyTypeId] = [PropertyType].[propertyTypeId] WHERE datePosted >= DATEADD(DAY, -30, GETDATE()) AND propertyId = 1;
+    SELECT TOP 1000 [Property].[propertyId],[cityId],[title],[descr],[images],[beds],[baths],[kitchens],[parkings],[price],[addres],[latitude],[longitude],[datePosted],[size],[PropertyType].[nom],[saleType],[agenceId],CASE WHEN Likes.propertyId IS NOT NULL THEN 1 ELSE 0 END AS is_liked
+    FROM [dbo].[Property] LEFT JOIN [PropertyType] ON [Property].[propertyTypeId] = [PropertyType].[propertyTypeId] LEFT JOIN
+        Likes ON property.propertyId = Likes.propertyId AND Likes.id = 23 WHERE datePosted >= DATEADD(DAY, -30, GETDATE()) AND Property.propertyId = 1;
 
     SELECT * FROM City WHERE cityId IN (${city.join(",")});
 `;
@@ -115,6 +120,7 @@ function mapProperty(property) {
     user: property.name,
     agencyAddress: property.adress,
     agencyEmail: property.email,
+    isLiked: property.is_liked,
   };
 }
 
@@ -132,7 +138,12 @@ function mapCities(city) {
 function decryptToken(token) {
   try {
     // Decrypt the token using the secret
-    const payload = jwt.verify(token, "ejnjnbjenoiugh91eyr3r@~@3ijnwjekn");
+    const payload = jwt.decode(token, "ejnjnbjenoiugh91eyr3r@~@3ijnwjekn");
+    let expiryDate = payload.exp;
+    let dateNow = Date.now() / 1000;
+    if (dateNow > expiryDate) {
+      return "expired";
+    }
     return payload;
   } catch (error) {
     // If there's an error during decryption (e.g., invalid token or secret), return null or handle the error accordingly
