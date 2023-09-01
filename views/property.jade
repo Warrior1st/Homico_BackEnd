@@ -1,0 +1,187 @@
+extends layout
+
+block content
+
+    .container
+        .table-wrapper
+            .table-title
+                .row
+                    .col-sm-6
+                        h2 Gerer
+                            b  Les Proprietes
+                    .col-sm-6
+                        a.btn.btn-success(href='#addEmployeeModal', data-toggle='modal')
+                            i.material-icons &#xE147;
+                            span Ajouter un nouvel employe
+                        a.btn.btn-danger(href='#deleteEmployeeModal', data-toggle='modal')
+                            i.material-icons &#xE15C;
+                            span Delete
+            table.table.table-striped.table-hover
+                thead
+                    tr
+                        th
+                            span.custom-checkbox
+                                input(type='checkbox', id='selectAll')
+                                label(for='selectAll')
+                        th Name
+                        th Email
+                        th Address
+                        th Phone
+                        th Actions
+                tbody
+                    tr
+                        td
+                            span.custom-checkbox
+                                input(type='checkbox', id='checkbox1', name='options[]', value='1')
+                                label(for='checkbox1')
+                        td Thomas Hardy
+                        td thomashardy@mail.com
+                        td 89 Chiaroscuro Rd, Portland, USA
+                        td (171) 555-2222
+                        td
+                            a.edit(href='#editEmployeeModal', data-toggle='modal')
+                                i.material-icons(data-toggle='tooltip', title='Edit') &#xE254;
+                            a.delete(href='#deleteEmployeeModal', data-toggle='modal')
+                                i.material-icons(data-toggle='tooltip', title='Delete') &#xE872;
+                    tr
+                        td
+                            span.custom-checkbox
+                                input(type='checkbox', id='checkbox2', name='options[]', value='1')
+                                label(for='checkbox2')
+                        td Dominique Perrier
+                        td dominiqueperrier@mail.com
+                        td Obere Str. 57, Berlin, Germany
+                        td (313) 555-5735
+                        td
+                            a.edit(href='#editEmployeeModal', data-toggle='modal')
+                                i.material-icons(data-toggle='tooltip', title='Edit') &#xE254;
+                            a.delete(href='#deleteEmployeeModal', data-toggle='modal')
+                                i.material-icons(data-toggle='tooltip', title='Delete') &#xE872;
+                    tr
+                        td
+                            span.custom-checkbox
+                                input(type='checkbox', id='checkbox3', name='options[]', value='1')
+                                label(for='checkbox3')
+                        td Maria Anders
+                        td mariaanders@mail.com
+                        td 25, rue Lauriston, Paris, France
+                        td (503) 555-9931
+                        td
+                            a.edit(href='#editEmployeeModal', data-toggle='modal')
+                                i.material-icons(data-toggle='tooltip', title='Edit') &#xE254;
+                            a.delete(href='#deleteEmployeeModal', data-toggle='modal')
+                                i.material-icons(data-toggle='tooltip', title='Delete') &#xE872;
+                    tr
+                        td
+                            span.custom-checkbox
+                                input(type='checkbox', id='checkbox4', name='options[]', value='1')
+                                label(for='checkbox4')
+                        td Fran Wilson
+                        td franwilson@mail.com
+                        td C/ Araquil, 67, Madrid, Spain
+                        td (204) 619-5731
+                        td
+                            a.edit(href='#editEmployeeModal', data-toggle='modal')
+                                i.material-icons(data-toggle='tooltip', title='Edit') &#xE254;
+                            a.delete(href='#deleteEmployeeModal', data-toggle='modal')
+                                i.material-icons(data-toggle='tooltip', title='Delete') &#xE872;
+                    tr
+                        td
+                            span.custom-checkbox
+                                input(type='checkbox', id='checkbox5', name='options[]', value='1')
+                                label(for='checkbox5')
+                        td Martin Blank
+                        td martinblank@mail.com
+                        td Via Monte Bianco 34, Turin, Italy
+                        td (480) 631-2097
+                        td
+                            a.edit(href='#editEmployeeModal', data-toggle='modal')
+                                i.material-icons(data-toggle='tooltip', title='Edit') &#xE254;
+                            a.delete(href='#deleteEmployeeModal', data-toggle='modal')
+                                i.material-icons(data-toggle='tooltip', title='Delete') &#xE872;
+            .clearfix
+                .hint-text Showing
+                    b 5
+                |  out of
+                b 25
+                |  entries
+                ul.pagination
+                    li.page-item.disabled
+                        a(href='#') Previous
+                    li.page-item
+                        a.page-link(href='#') 1
+                    li.page-item
+                        a.page-link(href='#') 2
+                    li.page-item.active
+                        a.page-link(href='#') 3
+                    li.page-item
+                        a.page-link(href='#') 4
+                    li.page-item
+                        a.page-link(href='#') 5
+                    li.page-item
+                        a.page-link(href='#') Next
+    // Edit Modal HTML
+    #addEmployeeModal.modal.fade
+        .modal-dialog
+            .modal-content
+                form
+                    .modal-header
+                        h4.modal-title Add Employee
+                        button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                    .modal-body
+                        .form-group
+                            label Name
+                            input.form-control(type='text', required)
+                        .form-group
+                            label Email
+                            input.form-control(type='email', required)
+                        .form-group
+                            label Address
+                            textarea.form-control(required)
+                        .form-group
+                            label Phone
+                            input.form-control(type='text', required)
+                    .modal-footer
+                        input.btn.btn-default(type='button', data-dismiss='modal', value='Cancel')
+                        input.btn.btn-success(type='submit', value='Add')
+
+    // Edit Modal HTML
+    #editEmployeeModal.modal.fade
+        .modal-dialog
+            .modal-content
+                form
+                    .modal-header
+                        h4.modal-title Edit Employee
+                        button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                    .modal-body
+                        .form-group
+                            label Name
+                            input.form-control(type='text', required)
+                        .form-group
+                            label Email
+                            input.form-control(type='email', required)
+                        .form-group
+                            label Address
+                            textarea.form-control(required)
+                        .form-group
+                            label Phone
+                            input.form-control(type='text', required)
+                    .modal-footer
+                        input.btn.btn-default(type='button', data-dismiss='modal', value='Cancel')
+                        input.btn.btn-info(type='submit', value='Save')
+
+    // Delete Modal HTML
+    #deleteEmployeeModal.modal.fade
+        .modal-dialog
+            .modal-content
+                form
+                    .modal-header
+                        h4.modal-title Delete Employee
+                        button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                    .modal-body
+                        p Are you sure you want to delete these Records?
+                        p.text-warning
+                            small This action cannot be undone.
+                    .modal-footer
+                        input.btn.btn-default(type='button', data-dismiss='modal', value='Cancel')
+                        input.btn.btn-danger(type='submit', value='Delete')

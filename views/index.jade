@@ -1,7 +1,11 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  p I dont understand this thing
-  p This is the environment variable #{enviro}
+  
+  .container
+    .row
+      .col-xs-12
+        .jumbotron
+          h1 Hello World!
+          p.lead Some simple text so you can see how awesome I am.
+          button.btn.btn-primary(type="button") Click me!

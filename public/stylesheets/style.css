@@ -1,8 +1,34 @@
 body {
-  padding: 50px;
+  padding: 100px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
 }
+
+/* Navigation Bar */
+.navbar{
+  padding: 5px 10px 5px 0px;
+  background-color: #28a7e9;
+}
+.navbar-brand{
+  font-size: 22px;
+  color: white !important;
+}
+.navbar .navbar-nav li a{
+  font-size: 16px;
+  color: white;
+}
+
+/* Animation */
+.animate{
+  padding: 0px 10px 0px 0px;
+  transition: all ease 0.4s;
+}
+
+/* Jumbotron */
+.jumbotron{
+  margin-top: 110px;
+}
+

@@ -1,5 +1,36 @@
-extends layout
+doctype html
+html
+  head
+    title Connectez Vous
+    link(href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css", rel="stylesheet")
+    link(href="/stylesheets/login.css", rel="stylesheet")
+  body
+    #login.container
+      .row-fluid
+        .span12
+          .login.well.well-small
+            .center
+              img(src="http://placehold.it/250x100&text=Logo", alt="logo")
+              div#errorMessage.alert.alert-danger(style="display: none;")
+              form(action="/login/users", style="", class="login-form", id="UserLoginForm", method="post", accept-charset="utf-8")
+                .control-group
+                  .input-prepend
+                    span.add-on
+                      i.icon-user
+                    input(name="data[User][username]", required="required", placeholder="Username", maxlength="255", type="text", id="UserUsername")
+                .control-group
+                  .input-prepend
+                    span.add-on
+                      i.icon-lock
+                    input(name="data[User][password]", required="required", placeholder="Password", type="password", id="UserPassword")
+                .control-group
+                  label#remember-me
+                    input(type="checkbox", name="data[User][remember_me]", value="1", id="UserRememberMe")
+                    |  Remember Me?
+                .control-group
+                  input.btn.btn-primary.btn-large.btn-block(type="submit", value="Sign in")
+                
+                
 
-block content
-  h1= title
-  p This is going to be the login endpoint
+    // Link to your JavaScript file from the public/javascripts directory
+    script(src="/javascripts/script.js")
