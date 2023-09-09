@@ -23,82 +23,55 @@ block content
                             span.custom-checkbox
                                 input(type='checkbox', id='selectAll')
                                 label(for='selectAll')
-                        th Name
-                        th Email
-                        th Address
-                        th Phone
+                        th Nom
+                        th Desc
+                        th Adresse 
+                        th Chambres 
+                        th Bains 
+                        th Cuisines 
+                        th Parkings 
+                        th Prix 
+                        th Latitude 
+                        th Longitude 
+                        th Taille 
+                        th Type/Vente
+                        th Type/Propriete
+                        th Ville
+                        th Agence
                         th Actions
                 tbody
-                    tr
-                        td
-                            span.custom-checkbox
-                                input(type='checkbox', id='checkbox1', name='options[]', value='1')
-                                label(for='checkbox1')
-                        td Thomas Hardy
-                        td thomashardy@mail.com
-                        td 89 Chiaroscuro Rd, Portland, USA
-                        td (171) 555-2222
-                        td
-                            a.edit(href='#editEmployeeModal', data-toggle='modal')
-                                i.material-icons(data-toggle='tooltip', title='Edit') &#xE254;
-                            a.delete(href='#deleteEmployeeModal', data-toggle='modal')
-                                i.material-icons(data-toggle='tooltip', title='Delete') &#xE872;
-                    tr
-                        td
-                            span.custom-checkbox
-                                input(type='checkbox', id='checkbox2', name='options[]', value='1')
-                                label(for='checkbox2')
-                        td Dominique Perrier
-                        td dominiqueperrier@mail.com
-                        td Obere Str. 57, Berlin, Germany
-                        td (313) 555-5735
-                        td
-                            a.edit(href='#editEmployeeModal', data-toggle='modal')
-                                i.material-icons(data-toggle='tooltip', title='Edit') &#xE254;
-                            a.delete(href='#deleteEmployeeModal', data-toggle='modal')
-                                i.material-icons(data-toggle='tooltip', title='Delete') &#xE872;
-                    tr
-                        td
-                            span.custom-checkbox
-                                input(type='checkbox', id='checkbox3', name='options[]', value='1')
-                                label(for='checkbox3')
-                        td Maria Anders
-                        td mariaanders@mail.com
-                        td 25, rue Lauriston, Paris, France
-                        td (503) 555-9931
-                        td
-                            a.edit(href='#editEmployeeModal', data-toggle='modal')
-                                i.material-icons(data-toggle='tooltip', title='Edit') &#xE254;
-                            a.delete(href='#deleteEmployeeModal', data-toggle='modal')
-                                i.material-icons(data-toggle='tooltip', title='Delete') &#xE872;
-                    tr
-                        td
-                            span.custom-checkbox
-                                input(type='checkbox', id='checkbox4', name='options[]', value='1')
-                                label(for='checkbox4')
-                        td Fran Wilson
-                        td franwilson@mail.com
-                        td C/ Araquil, 67, Madrid, Spain
-                        td (204) 619-5731
-                        td
-                            a.edit(href='#editEmployeeModal', data-toggle='modal')
-                                i.material-icons(data-toggle='tooltip', title='Edit') &#xE254;
-                            a.delete(href='#deleteEmployeeModal', data-toggle='modal')
-                                i.material-icons(data-toggle='tooltip', title='Delete') &#xE872;
-                    tr
-                        td
-                            span.custom-checkbox
-                                input(type='checkbox', id='checkbox5', name='options[]', value='1')
-                                label(for='checkbox5')
-                        td Martin Blank
-                        td martinblank@mail.com
-                        td Via Monte Bianco 34, Turin, Italy
-                        td (480) 631-2097
-                        td
-                            a.edit(href='#editEmployeeModal', data-toggle='modal')
-                                i.material-icons(data-toggle='tooltip', title='Edit') &#xE254;
-                            a.delete(href='#deleteEmployeeModal', data-toggle='modal')
-                                i.material-icons(data-toggle='tooltip', title='Delete') &#xE872;
+                    each house in houses
+                        tr
+                            // Hidden column for propertyId
+                            td.hidden
+                                span.custom-checkbox
+                                    input(type='hidden', name='propertyId', value=house.propertyId)
+
+                            // Rest of the visible columns
+                            td
+                                span.custom-checkbox
+                                    input(type='checkbox', id=`checkbox${house.propertyId}`, name='options[]', value=house.propertyId)
+                                    label(for=`checkbox${house.propertyId}`)
+                            td= house.title
+                            td= house.descr
+                            td= house.addres
+                            td= house.beds
+                            td= house.baths
+                            td= house.kitchens 
+                            td= house.parkings 
+                            td= house.price  
+                            td= house.latitude 
+                            td= house.longitude 
+                            td= house.size 
+                            td= house.saleType 
+                            td= house.propertyType
+                            td= house.city 
+                            td= house.agence
+                            td
+                                a.edit(href='#editEmployeeModal', data-toggle='modal', data-property-id=house.propertyId)
+                                    i.material-icons(data-toggle='tooltip', title='Edit') &#xE254;
+                                a.delete(href='#deleteEmployeeModal', data-toggle='modal', data-property-id=house.propertyId)
+                                    i.material-icons(data-toggle='tooltip', title='Delete') &#xE872;
             .clearfix
                 .hint-text Showing
                     b 5
@@ -108,11 +81,11 @@ block content
                 ul.pagination
                     li.page-item.disabled
                         a(href='#') Previous
-                    li.page-item
+                    li.page-item.active
                         a.page-link(href='#') 1
                     li.page-item
                         a.page-link(href='#') 2
-                    li.page-item.active
+                    li.page-item
                         a.page-link(href='#') 3
                     li.page-item
                         a.page-link(href='#') 4
@@ -120,68 +93,156 @@ block content
                         a.page-link(href='#') 5
                     li.page-item
                         a.page-link(href='#') Next
-    // Edit Modal HTML
-    #addEmployeeModal.modal.fade
-        .modal-dialog
-            .modal-content
-                form
-                    .modal-header
-                        h4.modal-title Add Employee
-                        button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
-                    .modal-body
-                        .form-group
-                            label Name
-                            input.form-control(type='text', required)
-                        .form-group
-                            label Email
-                            input.form-control(type='email', required)
-                        .form-group
-                            label Address
-                            textarea.form-control(required)
-                        .form-group
-                            label Phone
-                            input.form-control(type='text', required)
-                    .modal-footer
-                        input.btn.btn-default(type='button', data-dismiss='modal', value='Cancel')
-                        input.btn.btn-success(type='submit', value='Add')
+        // Add Modal HTML
+        #addEmployeeModal.modal.fade
+            .modal-dialog.modal
+                .modal-content
+                    form
+                        .modal-header
+                            h4.modal-title Ajouter une propriété
+                            button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                        .modal-body
+                            .form-group
+                                label Nom
+                                input.form-control(type='text', required)
+                            .form-group
+                                label Description
+                                textarea.form-control(required)
+                            .form-group
+                                label Adresse
+                                input.form-control(type= 'text',required)
+                            .form-group
+                                label Chambres
+                                input.form-control(type='text', required)
+                            .form-group
+                                label Bains
+                                input.form-control(type='text', required)
+                            .form-group
+                                label Cuisines
+                                input.form-control(type='text', required)
+                            .form-group
+                                label Parkings
+                                input.form-control(type='text', required)
+                            .form-group
+                                label Prix
+                                input.form-control(type='text', required)
+                            .form-group
+                                label Adresse
+                                input.form-control(type='text', required)
+                            .form-group
+                                label Latitude
+                                input.form-control(type='text', required)
+                            .form-group
+                                label Longitude
+                                input.form-control(type='text', required)
+                            .form-group
+                                label Taille
+                                input.form-control(type='text', required)
+                            .form-group
+                                label Type/Vente
+                                input.form-control(type='text', required)
+                            .form-group
+                                label Type/Propriété
+                                input.form-control(type='text', required)
+                            .form-group
+                                label Ville
+                                input.form-control(type='text', required)
+                            .form-group
+                                label Agence
+                                input.form-control(type='text', required)
+                        .modal-footer
+                            input.btn.btn-default(type='button', data-dismiss='modal', value='Annuler')
+                            input.btn.btn-success(type='submit', value='Ajouter')
 
-    // Edit Modal HTML
-    #editEmployeeModal.modal.fade
-        .modal-dialog
-            .modal-content
-                form
-                    .modal-header
-                        h4.modal-title Edit Employee
-                        button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
-                    .modal-body
-                        .form-group
-                            label Name
-                            input.form-control(type='text', required)
-                        .form-group
-                            label Email
-                            input.form-control(type='email', required)
-                        .form-group
-                            label Address
-                            textarea.form-control(required)
-                        .form-group
-                            label Phone
-                            input.form-control(type='text', required)
-                    .modal-footer
-                        input.btn.btn-default(type='button', data-dismiss='modal', value='Cancel')
-                        input.btn.btn-info(type='submit', value='Save')
+        // Edit Modal HTML
+        #editEmployeeModal.modal.fade
+            .modal-dialog
+                .modal-content
+                    form
+                        .modal-header
+                            h4.modal-title Modifier la propriété
+                            button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                        .modal-body
+                            .form-group
+                                input#propertyId.form-control(type='hidden', name='propertyId') 
+                            .form-group
+                                label(for='nom') Nom
+                                input#nom.form-control(type='text', name='nom', required)
+                            .form-group
+                                label(for='description') Description
+                                textarea#description.form-control(name='description', required)
+                            .form-group
+                                label(for='adresse') Adresse
+                                input#adresse.form-control(type='text', name='adresse', required)
+                            .form-group
+                                label(for='chambres') Chambres
+                                input#chambres.form-control(type='number', name='chambres', required)
+                            .form-group
+                                label(for='bains') Bains
+                                input#bains.form-control(type='number', name='bains', required)
+                            .form-group
+                                label(for='cuisines') Cuisines
+                                input#cuisines.form-control(type='number', name='cuisines', required)
+                            .form-group
+                                label(for='parkings') Parkings
+                                input#parkings.form-control(type='number', name='parkings', required)
+                            .form-group
+                                label(for='prix') Prix
+                                input#prix.form-control(type='text', name='prix', required)
+                            .form-group
+                                label(for='latitude') Latitude
+                                input#latitude.form-control(type='text', name='latitude', required)
+                            .form-group
+                                label(for='longitude') Longitude
+                                input#longitude.form-control(type='text', name='longitude', required)
+                            .form-group
+                                label(for='taille') Taille
+                                input#taille.form-control(type='number', name='taille', required)
+                            .form-group
+                                label(for='typeVente') Type/Vente
+                                input#typeVente.form-control(type='text', name='typeVente', required)
 
-    // Delete Modal HTML
-    #deleteEmployeeModal.modal.fade
-        .modal-dialog
-            .modal-content
-                form
-                    .modal-header
-                        h4.modal-title Delete Employee
-                        button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
-                    .modal-body
-                        p Are you sure you want to delete these Records?
-                        p.text-warning
-                            small This action cannot be undone.
-                    .modal-footer
-                        input.btn.btn-default(type='button', data-dismiss='modal', value='Cancel')
-                        input.btn.btn-danger(type='submit', value='Delete')
+                            .form-group
+                                label(for='typePropriete') Type/Propriété
+                                select#typePropriete.form-control(name='typePropriete')
+                            .form-group
+                                label(for='ville') Ville
+                                select#ville.form-control(name='ville')
+                            .form-group
+                                label(for='agence') Agence
+                                select#agence.form-control(name='agence')
+
+                            .image-gallery
+                                .existing-images
+                                    // This is an empty div where existing images will be appended
+                                    div#existing-images-container
+
+                                .image-preview
+                                    // Add an image preview container
+                                    img#image-preview(src='', alt='Image Preview')
+
+                                .image-actions
+                                    label(for='image-upload', class='custom-file-upload')
+                                        input#image-upload(type='file', accept='image/*', multiple='multiple') // Add an input for image uploads
+                                        span Sélectionner des images
+                        .modal-footer
+                            input.btn.btn-default(type='button', data-dismiss='modal', value='Annuler')
+                            input.btn.btn-info(type='submit', value='Enregistrer')
+
+
+        // Delete Modal HTML
+        #deleteEmployeeModal.modal.fade
+            .modal-dialog
+                .modal-content
+                    form
+                        .modal-header
+                            h4.modal-title Delete Employee
+                            button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                        .modal-body
+                            p Are you sure you want to delete these Records?
+                            p.text-warning
+                                small This action cannot be undone.
+                        .modal-footer
+                            input.btn.btn-default(type='button', data-dismiss='modal', value='Cancel')
+                            input.btn.btn-danger(type='submit', value='Delete')
+    script(src="/javascripts/propertyScript.js")
