@@ -1,6 +1,14 @@
 var express = require("express");
 var router = express.Router();
 const sql = require("mssql");
+const path = require("path");
+const fs = require("fs");
+
+const multer = require("multer");
+
+const handleError = (err, res) => {
+  res.status(500);
+};
 
 const config = {
   user: "homico_admin",
@@ -11,6 +19,11 @@ const config = {
     encrypt: true,
   },
 };
+
+const upload = multer({
+  dest: "/images",
+  // you might also want to set some limits: https://github.com/expressjs/multer#limits
+});
 router.post("/mngmntPropertyType", function (req, res, next) {
   if (req.session.loggedIn) {
     const propId = req.body.propId;
@@ -83,6 +96,7 @@ router.get("/", function (req, res, next) {
         typePropriete,
         ville,
         agence,
+        images,
       } = req.query;
 
       // Construct and execute the update query here
@@ -129,6 +143,95 @@ router.get("/", function (req, res, next) {
     }
   } else {
     res.redirect("/login");
+  }
+});
+
+router.post("/upload", upload.array("file", 5), function (req, res) {
+  if (req.session.loggedIn) {
+    //This is stuff todo tomorrow need to finish the update query as well as think about how we are going to rename the photos to match with their names in the database.
+    //Also the testing is not complete
+    const {
+      propertyId,
+      nom,
+      description,
+      adresse,
+      chambres,
+      bains,
+      cuisines,
+      parkings,
+      prix,
+      latitude,
+      longitude,
+      taille,
+      typeVente,
+      typePropriete,
+      ville,
+      agence,
+      images,
+    } = req.body;
+
+    // Construct and execute the update query here
+    const updateQuery = `
+      UPDATE Property SET title = ${nom},
+      descr = ${description},
+      addres = ${adresse},
+      beds = ${chambres},
+      baths = ${bains},
+      kitchens = ${cuisines},
+      parkings = ${parkings},
+      price = ${prix},
+      latitude = ${latitude},
+      longitude = ${longitude},
+      size = ${taille},
+      saleType = ${typeVente},
+      propertyTypeId = ${typePropriete},
+      cityId = ${ville},
+      images = ${images},
+      agenceId = ${agence} WHERE propertyId = ${propertyId};
+    `;
+
+    sql.connect(config, function (err) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+
+      const request = new sql.Request();
+      request.query(updateQuery, function (err, result) {
+        if (err) {
+          console.log(err);
+          return;
+        }
+
+        // Handle the update result if needed
+      });
+    });
+
+    if (req.files.length > 0) {
+      req.files.forEach((file) => {
+        const tempPath = file.path;
+        const targetPath = path.join(
+          __dirname,
+          `../public/images/${file.originalname}`
+        );
+
+        if (path.extname(file.originalname).toLowerCase() === ".jpeg") {
+          fs.rename(tempPath, targetPath, (err) => {
+            if (err) return handleError(err, res);
+          });
+        } else {
+          fs.unlink(tempPath, (err) => {
+            if (err) return handleError(err, res);
+          });
+        }
+      });
+
+      res.status(200).contentType("text/plain").end("Files uploaded!");
+    } else {
+      res.status(400).contentType("text/plain").end("No files uploaded!");
+    }
+  } else {
+    return res.status(403).json("Not authorized");
   }
 });
 

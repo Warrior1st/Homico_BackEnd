@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
   editButtons.forEach((editButton) => {
     editButton.addEventListener("click", function (event) {
       event.preventDefault();
-
+      resetEditModal();
       const propertyId = this.getAttribute("data-property-id");
       // You now have the 'propertyId' associated with the clicked row
 
@@ -14,6 +14,69 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+function resetEditModal() {
+  const modal = document.querySelector("#editEmployeeModal");
+
+  const propertyIdField = modal.querySelector('input[name="propertyId"]');
+  const nomInput = modal.querySelector('input[name="nom"]');
+  const descriptionTextarea = modal.querySelector(
+    'textarea[name="description"]'
+  );
+  const adresseInput = modal.querySelector('input[name="adresse"]');
+  const chambresInput = modal.querySelector('input[name="chambres"]');
+  const bainsInput = modal.querySelector('input[name="bains"]');
+  const cuisinesInput = modal.querySelector('input[name="cuisines"]');
+  const parkingsInput = modal.querySelector('input[name="parkings"]');
+  const prixInput = modal.querySelector('input[name="prix"]');
+  const latitudeInput = modal.querySelector('input[name="latitude"]');
+  const longitudeInput = modal.querySelector('input[name="longitude"]');
+  const tailleInput = modal.querySelector('input[name="taille"]');
+  const typeVenteSelect = modal.querySelector('input[name="typeVente"]');
+  const typeProprieteSelect = modal.querySelector(
+    'select[name="typePropriete"]'
+  );
+  const villeSelect = modal.querySelector('select[name="ville"]');
+  const agenceSelect = modal.querySelector('select[name="agence"]');
+
+  propertyIdField.value = "";
+  nomInput.value = "";
+  descriptionTextarea.value = "";
+  adresseInput.value = "";
+  chambresInput.value = "";
+  bainsInput.value = "";
+  cuisinesInput.value = "";
+  parkingsInput.value = "";
+  prixInput.value = "";
+  latitudeInput.value = "";
+  longitudeInput.value = "";
+  tailleInput.value = "";
+  typeVenteSelect.value = "";
+
+  //Clean the select dropdowns
+  while (
+    villeSelect.options.length > 0 ||
+    typeProprieteSelect.options.length > 0 ||
+    agenceSelect.options.length > 0
+  ) {
+    if (villeSelect.options.length > 0) {
+      villeSelect.remove(0);
+    }
+    if (typeProprieteSelect.options.length > 0) {
+      typeProprieteSelect.remove(0);
+    }
+    if (agenceSelect.options.length > 0) {
+      agenceSelect.remove(0);
+    }
+  }
+
+  //Clean the images
+  const container = document.getElementById("existing-images-container");
+
+  // Remove all child elements from the container
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
+}
 
 function populateEditModal(response) {
   const modal = document.querySelector("#editEmployeeModal");
@@ -119,6 +182,27 @@ function populateEditModal(response) {
   });
 
   $("#editEmployeeModal").modal("show");
+}
+
+//Update the image preview component
+function previewImage(event) {
+  const imagePreview = document.getElementById("image-preview");
+  const fileInput = event.target;
+  const files = fileInput.files;
+
+  if (files.length > 0) {
+    const file = files[0];
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      imagePreview.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+  } else {
+    // If no files are selected, clear the image preview
+    imagePreview.src = "";
+  }
 }
 
 // Define a function to append existing images

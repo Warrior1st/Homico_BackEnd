@@ -158,7 +158,7 @@ block content
         #editEmployeeModal.modal.fade
             .modal-dialog
                 .modal-content
-                    form
+                    form(action='/property/upload', method='POST', enctype='multipart/form-data')   
                         .modal-header
                             h4.modal-title Modifier la propriété
                             button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
@@ -211,7 +211,7 @@ block content
                             .form-group
                                 label(for='agence') Agence
                                 select#agence.form-control(name='agence')
-
+                        
                             .image-gallery
                                 .existing-images
                                     // This is an empty div where existing images will be appended
@@ -223,8 +223,8 @@ block content
 
                                 .image-actions
                                     label(for='image-upload', class='custom-file-upload')
-                                        input#image-upload(type='file', accept='image/*', multiple='multiple') // Add an input for image uploads
-                                        span Sélectionner des images
+                                    input#image-upload(type='file', accept='image/*', multiple='multiple', onchange='previewImage(event)' name='file')
+                                    span Sélectionner des images
                         .modal-footer
                             input.btn.btn-default(type='button', data-dismiss='modal', value='Annuler')
                             input.btn.btn-info(type='submit', value='Enregistrer')
