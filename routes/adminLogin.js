@@ -5,10 +5,12 @@ const mysql = require("mysql2/promise");
 
 const config = {
   host: "127.0.0.1",
+  connectTimeout: 10000,
   port: 3306,
   user: "root",
   password: "admin",
   database: "homico",
+  connectionLimit: 100,
 };
 
 /* GET home page. */
@@ -20,8 +22,7 @@ router.post("/users", async function (req, res, next) {
   const remember_me = req.body.data.User.remember_me || false;
 
   // Now you can access the form data
-  //const pool = await sql.connect(config);
-
+  const pool = mysql.createPool(config);
   // async function connectToDatabase() {
   //   try {
   //     const pool = await mysql.createPool(config); // Create a connection pool
@@ -35,9 +36,10 @@ router.post("/users", async function (req, res, next) {
   // connectToDatabase();
 
   async function queryDatabase(username, password) {
+    let conn;
+
     try {
-      // Create a connection pool
-      const pool = await mysql.createPool(config);
+      conn = await pool.getConnection();
 
       // Query with parameterized placeholders (`?`)
       const query = `
@@ -49,14 +51,16 @@ router.post("/users", async function (req, res, next) {
       `;
 
       // Execute the query
-      const [rows] = await pool.execute(query, [username, password]);
+      const [rows] = await conn.execute(query, [username, password]);
 
       // Log the results
       console.log(rows);
-      return rows;
+      return rows[0] || null;
     } catch (error) {
       console.error("Error querying the database:", error.message);
       throw error;
+    } finally {
+      if (conn) conn.release();
     }
   }
 
@@ -76,30 +80,28 @@ router.post("/users", async function (req, res, next) {
   // }
 
   // Compare the password with the stored password (plain text)
-  if (password === queryDatabase(username, password)) {
+  let queried_user = await queryDatabase(username, password);
+  if (queried_user && password === queried_user.passwrd) {
     const payload = {
-      userId: user.id,
-      username: user.username,
-      role: user.nom,
+      userId: queried_user.id,
+      username: queried_user.username,
+      role: queried_user.nom,
     };
 
-    const userId = user.id;
-    const username = user.username;
-    const role = user.nom;
-    const firstName = user.firstName;
-    const lastName = user.lastName;
-    const dateofBirth = user.dateofBirth;
-    const phoneNumber = user.phoneNumber;
-    const email = user.email;
-    const address = user.address;
-    const latitude = user.latitude;
-    const longitude = user.longitude;
-    const imageName = user.profilePic;
+    // const userId = user.id;
+    // const username = user.username;
+    // const role = user.nom;
+    // const firstName = user.firstName;
+    // const lastName = user.lastName;
+    // const dateofBirth = user.dateofBirth;
+    // const phoneNumber = user.phoneNumber;
+    // const email = user.email;
+    // const address = user.address;
+    // const latitude = user.latitude;
+    // const longitude = user.longitude;
+    // const imageName = user.profilePic;
 
-    //Store the time the user logged in
-    const connexionDatetime = new Date().toISOString();
-
-    storeLoginRecord(user, req, res);
+    storeLoginRecord(queried_user, req, res);
 
     // Insert the login record into the HistoriqueConnexion table
     //   const insertQuery = `INSERT INTO HistoriqueConnexion (id, connexion_datetime) VALUES (@userId, @connexionDatetime)`;
@@ -128,7 +130,11 @@ router.post("/users", async function (req, res, next) {
       const pool = await mysql.createPool(config);
 
       // Get the current date and time in ISO format
-      const connexionDatetime = new Date().toISOString();
+      const now = new Date();
+      const connexionDatetime = now
+        .toISOString()
+        .slice(0, 19) // This removes the milliseconds and the 'Z' at the end
+        .replace("T", " "); // This replaces the 'T' with a space for MySQL compatibility
 
       // Parameterized query for inserting login record
       const insertQuery = `

@@ -193,3 +193,180 @@ CREATE TABLE HistoriqueConnexion (
 
 ALTER TABLE users
 ADD roleId INT FOREIGN KEY REFERENCES Role(roleId);
+
+
+/* Scripts in mysql
+drop database homico;
+create database homico;
+
+use homico;
+CREATE TABLE Role (
+    roleId INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255)
+);
+
+INSERT INTO Role (nom)
+VALUES
+    ('Admin'),
+    ('User'),
+    ('Manager'),
+    ('Guest');
+
+CREATE TABLE City (
+    cityId INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255),
+    images VARCHAR(255),
+    searchCount BIGINT
+);
+
+INSERT INTO City (nom, images, searchCount)
+VALUES
+    ('Kinshasa', '5;6;7;8', 0),
+    ('Lubumbashi', '9;10;11;12', 0),
+    ('Goma', '13;14;15;16', 0);
+
+CREATE TABLE Users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    lastName VARCHAR(255) NOT NULL,
+    firstName VARCHAR(255),
+    dateofBirth VARCHAR(255),
+    phoneNumber VARCHAR(255),
+    address VARCHAR(255),
+    latitude VARCHAR(255),
+    longitude VARCHAR(255),
+    userName VARCHAR(255),
+    passwrd VARCHAR(255),
+    profilePic VARCHAR(255),
+    roleId INT NOT NULL,
+    CONSTRAINT FK_userRole FOREIGN KEY (roleId) REFERENCES Role(roleId)
+);
+
+INSERT INTO Users (lastName, firstName, dateofBirth, phoneNumber, address, latitude, longitude, userName, passwrd, profilePic, roleId)
+VALUES
+    ('Doe', 'John', '1990-01-01', '123456789', '123 Main St', '123.456', '78.901', 'johndoe', 'password123', 'profilepic.jpg', 1),
+    ('Smith', 'Jane', '1985-05-10', '987654321', '456 Elm St', '456.789', '23.456', 'janesmith', 'password456', 'profilepic.jpg', 2),
+    ('Wilson', 'Sam', '1992-09-15', '555555555', '789 Oak St', '789.012', '45.678', 'samwilson', 'password789', 'profilepic.jpg', 2);
+
+ALTER TABLE Users ADD email VARCHAR(255);
+
+UPDATE Users SET email = 'johndoe@gmail.com' WHERE id = 1;
+UPDATE Users SET email = 'janesmith@gmail.com' WHERE id = 2;
+UPDATE Users SET email = 'samwilson@gmail.com' WHERE id = 3;
+
+CREATE TABLE Agences (
+    agenceId INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    logo VARCHAR(255),
+    phone VARCHAR(255),
+    altPhone VARCHAR(255),
+    email VARCHAR(255),
+    website VARCHAR(255),
+    longitude VARCHAR(255),
+    latitude VARCHAR(255),
+    passswrd VARCHAR(255),
+    adress VARCHAR(255),
+    cityId INT,
+    CONSTRAINT FK_agenceId FOREIGN KEY (cityId) REFERENCES City(cityId)
+);
+
+INSERT INTO Agences (name, logo, phone, altPhone, email, website, longitude, latitude, passswrd, adress, cityId)
+VALUES
+('Agence Alpha', 'logo_alpha.png', '123-456-7890', '987-654-3210', 'contact@alpha.com', 'https://www.alpha.com', '12.345678', '98.765432', 'password123', '123 Alpha St', 1),
+('Agence Beta', 'logo_beta.png', '321-654-9870', '876-543-2109', 'contact@beta.com', 'https://www.beta.com', '23.456789', '87.654321', 'password456', '456 Beta Ave', 2),
+('Agence Gamma', 'logo_gamma.png', '456-789-1230', '654-987-3210', 'contact@gamma.com', 'https://www.gamma.com', '34.567890', '76.543210', 'password789', '789 Gamma Blvd', 3),
+('Agence Delta', 'logo_delta.png', '567-890-2341', '765-432-1098', 'contact@delta.com', 'https://www.delta.com', '45.678901', '65.432109', 'password101', '101 Delta Dr', 2),
+('Agence Epsilon', 'logo_epsilon.png', '678-901-3452', '654-321-9870', 'contact@epsilon.com', 'https://www.epsilon.com', '56.789012', '54.321098', 'password202', '202 Epsilon Ln', 1);
+
+
+CREATE TABLE PropertyType (
+    propertyTypeId INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255)
+);
+
+INSERT INTO PropertyType (nom)
+VALUES
+    ('terrain'),
+    ('appartement'),
+    ('maison');
+
+CREATE TABLE Property (
+    propertyId INT AUTO_INCREMENT PRIMARY KEY,
+    cityId INT NOT NULL,
+    featured BOOLEAN,
+    title VARCHAR(255),
+    descr VARCHAR(255),
+    images VARCHAR(255),
+    beds INT,
+    baths INT,
+    kitchens INT,
+    parkings INT,
+    price FLOAT,
+    addres VARCHAR(255),
+    latitude VARCHAR(255),
+    longitude VARCHAR(255),
+    datePosted VARCHAR(255),
+    size FLOAT,
+    propertyTypeId INT NOT NULL,
+    saleType VARCHAR(255),
+    agenceId INT,
+    CONSTRAINT FK_propertyCity FOREIGN KEY (cityId) REFERENCES City(cityId),
+    CONSTRAINT FK_propertyType FOREIGN KEY (propertyTypeId) REFERENCES PropertyType(propertyTypeId),
+    CONSTRAINT FK_propertyAgency FOREIGN KEY (agenceId) REFERENCES Agences(agenceId)
+);
+
+INSERT INTO Property (
+    cityId, title, descr, images, beds, baths, kitchens, parkings, price, addres, latitude, longitude, datePosted, size, propertyTypeId, saleType, agenceId
+)
+VALUES
+    (1, 'Red House', 'Experience the vibrant energy of this stunning Red House...',
+        'redHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+        5, 3, 2, 0, 55000.0, '123 Red Street', -4.325, 15.322, NOW(), 57, 1, 'rent', 6),
+    (1, 'Fall House', 'Imagine waking up to the breathtaking views of fall foliage...',
+   'fallHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   7, 5, 1, 0, 95000.0, '456 Fall Avenue', -4.329, 15.324, NOW(), 350, 2, 'sell', 6),
+
+  (1, 'Old House', 'Step back in time with this charming Old House, full of character...',
+   'oldHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   2, 3, 1, 0, 155000.0, '789 Old Road', -4.331, 15.326, NOW(), 125, 2, 'rent', 7),
+
+  (1, 'Pool House', 'Take a dip in your own private oasis with this luxurious Pool House...',
+   'poolHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   3, 3, 2, 0, 255000.0, '789 Pool Lane', -4.333, 15.328, NOW(), 200, 1, 'sell', 8),
+
+  (1, 'Modern House', 'Experience modern living at its finest in this sleek and stylish Modern House...',
+   'modernHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   4, 2, 1, 0, 180000.0, '987 Modern Drive', -4.335, 15.330, NOW(), 180, 1, 'rent', 6),
+
+  (2, 'Beach House', 'Escape to paradise with this stunning Beach House...',
+   'beachHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   3, 4, 1, 0, 220000.0, '321 Beachfront Avenue', -4.337, 15.332, NOW(), 250, 1, 'sell', 9),
+
+  (2, 'Mountain House', 'Embrace the tranquility of nature with this charming Mountain House...',
+   'mountainHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   6, 3, 2, 0, 275000.0, '654 Mountain Road', -4.339, 15.334, NOW(), 300, 2, 'rent', 10),
+
+  (2, 'Lake House', 'Indulge in waterfront living with this exquisite Lake House...',
+   'lakeHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   5, 4, 2, 0, 330000.0, '987 Lakeside Drive', -4.341, 15.336, NOW(), 350, 2, 'sell', 6),
+
+  (3, 'Ranch House', 'Experience country living at its finest in this charming Ranch House...',
+   'ranchHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   7, 2, 1, 0, 285000.0, '123 Country Lane', -4.343, 15.338, NOW(), 400, 3, 'rent', 9),
+
+  (3, 'Suburban House', 'Enjoy the comforts of suburban living with this lovely Suburban House...',
+   'suburbanHouse.jpg;bailey-anselme-Bkp3gLygyeA-unsplash.jpg;dillon-kydd-XGvwt544g8k-unsplash.jpg;johnson-johnson-U6Q6zVDgmSs-unsplash.jpg;ronnie-george-z11gbBo13ro-unsplash.jpg;trinity-nguyen-xQhqS7OWEqE-unsplash.jpg',
+   8, 3, 2, 0, 310000.0, '321 Suburban Drive', -4.345, 15.340, NOW(), 450, 3, 'sell', 7);
+CREATE TABLE Likes (
+    likeId INT AUTO_INCREMENT PRIMARY KEY,
+    id INT NOT NULL,
+    propertyId INT NOT NULL,
+    CONSTRAINT FK_userLikes FOREIGN KEY (id) REFERENCES Users(id),
+    CONSTRAINT FK_propertyLike FOREIGN KEY (propertyId) REFERENCES property(propertyId)
+);
+
+CREATE TABLE HistoriqueConnexion (
+    hist_id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT,
+    connexion_datetime DATETIME,
+    FOREIGN KEY (id) REFERENCES Users(id)
+);
